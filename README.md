@@ -158,4 +158,33 @@ https://github.com/lucas-clemente/quic-go/blob/63b7354a25ea94d082d1ff551d77bbdbf
 
 我们要做的，和 研究xtls类似，把官方 文件下载下来，然后通过diff命令比较与魔改版的异同。
 
+## pacer.go
+
+作者对pacer的改动较少，先分析pacer.go
+
+const部分，把 `const maxBurstSizePackets = 10` 删了，改成了 
+
+```
+const (
+	maxBurstPackets = 10
+	minPacingDelay  = time.Millisecond
+)
+
+```
+就是 10那个改了个名，然后加了个 minPacingDelay 为1毫秒
+
+pacer结构体没有变化，只是getAdjustedBandwidth改个名改成了 getBandwidth 
+
+newPacer函数的参数中的函数的 签名变化了一下，但是实际上没差别，底层都是 int64
+
+（即 `func newPacer(getBandwidth func() Bandwidth)` 改成了 `func newPacer(getBandwidth func() congestion.ByteCount)` ）
+
+所以结构体里成员的改名很合理
+
+然后里面的 `p.budgetAtLastSent = p.maxBurstSize()` 改成了 `budgetAtLastSent: maxBurstPackets * initMaxDatagramSize,`
+
+而 `initMaxDatagramSize = 1252` 是在 brutal.go 里定义的，这里确实变化较大，但是影响应该不大，因为只是 初始条件改变了一丢丢
+
+然后 `maxBurstSize()` 改动了，
+
 
