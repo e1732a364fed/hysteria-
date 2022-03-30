@@ -187,4 +187,37 @@ newPacer函数的参数中的函数的 签名变化了一下，但是实际上�
 
 然后 `maxBurstSize()` 改动了，
 
+这里贴出来对比一下：
+
+原作：
+```
+return utils.MaxByteCount(
+	protocol.ByteCount(uint64((protocol.MinPacingDelay+protocol.TimerGranularity).Nanoseconds())*p.getAdjustedBandwidth())/1e9,
+	maxBurstSizePackets*p.maxDatagramSize,
+)
+```
+hysteria:
+
+```
+return maxByteCount(
+	congestion.ByteCount((minPacingDelay+time.Millisecond).Nanoseconds())*p.getBandwidth()/1e9,
+	maxBurstPackets*p.maxDatagramSize,
+)
+```
+
+但是实际观察发现都是一回事，作者还是改了个名之类的。
+
+然后是 TimeUntilSend方法，仔细看好像还是只是改了点名。无所谓
+
+
+## brutal.go
+
+实际上，cubic是单独的一种阻控，应该是早被用于tcp的；而quic默认也是用这种方式，但是hysteria这里就该了，用了一种被它成为brutal的方式，那么我们看一看。
+
+
+
+
+
+
+
 
