@@ -352,6 +352,10 @@ TimeUntilSend returns when the next packet should be sent. It returns the zero v
 brutal的pacer也是一种线性的，十分简单的pacer，而不是 cubicSender中的复杂实现。
 
 
+我们可以阅读一些中文文章来了解一下
+
+https://hanpfei.github.io/2019/08/29/draft-ietf-quic-recovery/
+
 
 
 
