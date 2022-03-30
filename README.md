@@ -215,7 +215,22 @@ return maxByteCount(
 实际上，cubic是单独的一种阻控，应该是早被用于tcp的；而quic默认也是用这种方式，但是hysteria这里就该了，用了一种被它成为brutal的方式，那么我们看一看。
 
 
+实际上感性认识就知道，只是二者的接口一致罢了，实际实现肯定不同
 
+我们看BrutalSender结构体，非常简单，对应官方的 cubicSender 结构体
+
+
+```
+type BrutalSender struct {
+	rttStats        congestion.RTTStatsProvider
+	bps             congestion.ByteCount
+	maxDatagramSize congestion.ByteCount
+	pacer           *pacer
+
+	pktInfoSlots [pktInfoSlotCount]pktInfo
+}
+```
+它保留了 cubicSender的 rttStats 和 pacer， 然后多了两个储存值的地方，然后关键是 `pktInfoSlots [pktInfoSlotCount]pktInfo`
 
 
 
