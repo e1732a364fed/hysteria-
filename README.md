@@ -329,6 +329,25 @@ RTT: https://www.cloudflare.com/learning/cdn/glossary/round-trip-time-rtt/
 >Round-trip time (RTT) is the duration in milliseconds (ms) it takes for a network request to go from a starting point to a destination and back again to the starting point. RTT is an important metric in determining the health of a connection on a local network or the larger Internet, and is commonly utilized by network administrators to diagnose the speed and reliability of network connections.
 
 
+实际上，lucas的cubic代码应该是来自 谷歌官方的quic实现
+
+https://chromium.googlesource.com/external/github.com/google/proto-quic/+/4cc12d2679be1baceb162a7fde89b7183901fe84/src/net/quic/congestion_control/tcp_cubic_sender_bytes.cc
+
+
+关于阻塞窗口：
+
+>In TCP, the congestion window (CWND) is one of the factors that determines the number of bytes that can be sent out at any time.
+
+总之，brutal似乎没啥特殊的，可以说是 “低等” 阻塞控制协议，用了特别简单的算法来简单 用加减乘除算出一个 阻塞窗口，而不是cubic这种更科学的方式。
+
+
+
+
+
+
+
+
+
 
 
 
