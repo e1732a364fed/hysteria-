@@ -280,10 +280,53 @@ OnRetransmissionTimeout
 
 似乎也没啥用啊？光记录有啥用。那么我们搜索到底谁还用了 pktInfoSlots，发现 `getAckRate` 方法用到了
 
+它通过计算 ackCount 和 lossCount 的到rate，具体是 `rate := float64(ackCount) / float64(ackCount+lossCount)`
 
+然后再搜就知道了，bs.pacer 以及 GetCongestionWindow 方法都用到了 getAckRate 方法
 
+pacer的定义是
+```
+bs.pacer = newPacer(func() congestion.ByteCount {
+	return congestion.ByteCount(float64(bs.bps) / bs.getAckRate())
+})
+```
 
+GetCongestionWindow 是
+```
+func (b *BrutalSender) GetCongestionWindow() congestion.ByteCount {
+	rtt := maxDuration(b.rttStats.LatestRTT(), b.rttStats.SmoothedRTT())
+	if rtt <= 0 {
+		return 10240
+	}
+	return congestion.ByteCount(float64(b.bps) * rtt.Seconds() * 1.5 / b.getAckRate())
+}
+```
 
+对比 cubicSender的，它的pacer的函数是 BandwidthEstimate，暂时先不管；而 GetCongestionWindow直接是返回 c.congestionWindow，而这个window是在其他步骤经过复杂计算的，也暂时不用管。
+
+在看pacer，pacer 在 
+
+```
+TimeUntilSend
+HasPacingBudget
+OnPacketSent
+SetMaxDatagramSize
+```
+里用到了
+
+而对比 cubicSender的，TimeUntilSend，HasPacingBudget 的代码完全一样，OnPacketSent的话 cubicSender的多了两行，被brutal的删掉了
+
+而 SetMaxDatagramSize 也是一样，brutal的简单，删掉了一些cubicSender多多代码。
+
+总之，目前直观解释，就是通过 GetCongestionWindow 方法被不断地调用，quic就获知了 需要的window大小，实际上就应该是每次发送包的长度吧。
+
+实际上我们看到的这些代码和BBR类似。
+
+我们可以看到，rttStats 挺重要，它提供了rtt的值，
+
+RTT: https://www.cloudflare.com/learning/cdn/glossary/round-trip-time-rtt/
+
+>Round-trip time (RTT) is the duration in milliseconds (ms) it takes for a network request to go from a starting point to a destination and back again to the starting point. RTT is an important metric in determining the health of a connection on a local network or the larger Internet, and is commonly utilized by network administrators to diagnose the speed and reliability of network connections.
 
 
 
