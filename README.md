@@ -212,7 +212,7 @@ return maxByteCount(
 
 ## brutal.go
 
-实际上，cubic是单独的一种阻控，应该是早被用于tcp的；而quic默认也是用这种方式，但是hysteria这里就该了，用了一种被它成为brutal的方式，那么我们看一看。
+实际上，cubic是单独的一种阻控，应该是早被用于tcp的；而quic默认也是用这种方式，但是hysteria这里就改了，用了一种被它成为brutal的方式，那么我们看一看。
 
 
 实际上感性认识就知道，只是二者的接口一致罢了，实际实现肯定不同
