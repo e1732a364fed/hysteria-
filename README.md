@@ -318,7 +318,7 @@ SetMaxDatagramSize
 
 而 SetMaxDatagramSize 也是一样，brutal的简单，删掉了一些cubicSender多多代码。
 
-总之，目前直观解释，就是通过 GetCongestionWindow 方法被不断地调用，quic就获知了 需要的window大小，实际上就应该是每次发送包的长度吧。
+总之，目前直观解释，就是通过 GetCongestionWindow 方法被不断地调用，quic就获知了 需要的window大小，实际上就应该是每次发送包的最大长度吧。
 
 实际上我们看到的这些代码和BBR类似。
 
