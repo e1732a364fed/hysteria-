@@ -146,5 +146,13 @@ https://github.com/lucas-clemente/quic-go/pull/2442
 总之先学一下再说。。。
 
 
+这个pacer是从lucas官方的包里拷贝出来然后魔改的
+
+https://github.com/lucas-clemente/quic-go/blob/master/internal/congestion/pacer.go
+
+
+brutal文件则是来自 官方的 cubic_sender.go
+
+https://github.com/lucas-clemente/quic-go/blob/63b7354a25ea94d082d1ff551d77bbdbf28b2295/internal/congestion/cubic_sender.go
 
 
