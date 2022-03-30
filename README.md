@@ -358,8 +358,10 @@ https://hanpfei.github.io/2019/08/29/draft-ietf-quic-recovery/
 
 
 
+pacer大概就是在 TimeUntilSend 应用，控制发包的节奏
 
+>在网络中不加任何延迟地发送多个数据包会导致数据包爆发，这可能会造成短期的拥塞和丢包。实现必须（MUST）使用 pacing
 
-
+这也可以解释为什么直接用udp暴力发包会导致高概率丢包，（我的实际测试中可能丢了99%，只有1%能发到。。。）
 
 
