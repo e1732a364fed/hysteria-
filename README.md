@@ -230,7 +230,61 @@ type BrutalSender struct {
 	pktInfoSlots [pktInfoSlotCount]pktInfo
 }
 ```
-它保留了 cubicSender的 rttStats 和 pacer， 然后多了两个储存值的地方，然后关键是 `pktInfoSlots [pktInfoSlotCount]pktInfo`
+它保留了 cubicSender的 rttStats 和 pacer， 然后多了两个储存 配置值的地方，
+
+然后关键是这个数组 `pktInfoSlots [pktInfoSlotCount]pktInfo`
+
+
+```
+type pktInfo struct {
+	Timestamp int64
+	AckCount  uint64
+	LossCount uint64
+}
+```
+
+pktInfoSlotCount为定值4
+
+然后它为BrutalSender实现了下列方法
+
+```
+SetRTTStatsProvider
+TimeUntilSend
+HasPacingBudget
+CanSend
+GetCongestionWindow
+OnPacketSent
+OnPacketAcked
+OnPacketLost
+SetMaxDatagramSize
+getAckRate
+InSlowStart
+InRecovery
+MaybeExitSlowStart
+OnRetransmissionTimeout
+
+```
+
+其中，SetRTTStatsProvider， getAckRate， 这两个方法是独有的，其它方法都是实现接口
+
+然后， InSlowStart， InRecovery都直接返回false，而 cubic则不是，cubic是视情况而定的。
+
+
+然后，我们直观的去看代码量，发现 brutal的 `OnPacketAcked` 和 `OnPacketLost` 比较长，肯定重要，从这里开始分析
+
+肯定推测得知，OnPacketAcked 就是每收到一个包调用一次该函数，OnPacketLost同理
+
+这里 OnPacketAcked 就是生成当前 时间的时间戳，然后更新 `b.pktInfoSlots[slot]`。那么这个 pktInfoSlots显然是一个 ring buffer
+
+单单 OnPacketAcked 好像没啥用？查看 OnPacketLost，发现是类似的过程，只是把 `AckCount++` 变成了 `LossCount++`
+
+似乎也没啥用啊？光记录有啥用。那么我们搜索到底谁还用了 pktInfoSlots，发现 `getAckRate` 方法用到了
+
+
+
+
+
+
 
 
 
