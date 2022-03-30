@@ -156,3 +156,6 @@ brutal文件则是来自 官方的 cubic_sender.go
 https://github.com/lucas-clemente/quic-go/blob/63b7354a25ea94d082d1ff551d77bbdbf28b2295/internal/congestion/cubic_sender.go
 
 
+我们要做的，和 研究xtls类似，把官方 文件下载下来，然后通过diff命令比较与魔改版的异同。
+
+
